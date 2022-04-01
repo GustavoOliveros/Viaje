@@ -8,4 +8,4 @@ Ejercicio obligatorio número 1 realizado en PHP.
  Universidad del Comahue
 
  ## Estudiante
- - **Gustavo Oliveros** - legajo 3621 - mail:gustavo.oliveros@est.fi.uncoma.edu.ar - usuario github: GustavoOliveros
+ - **Gustavo Oliveros** - legajo FAI-3621 - mail:gustavo.oliveros@est.fi.uncoma.edu.ar - usuario github: GustavoOliveros
