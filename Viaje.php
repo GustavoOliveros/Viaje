@@ -140,3 +140,4 @@ class Viaje{
         "\nCantidad de pasajeros: " . count($this->getPasajeros());
     }
 }
+?>
