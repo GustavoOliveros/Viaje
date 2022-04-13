@@ -129,6 +129,28 @@ class Viaje{
         "\nNúmero de documento: " . $arrayPasajeros[$indicePasajero]["numeroDoc"];
     }
 
+    /**
+     * Retorna todos los pasajeros en un string
+     * @return string
+     */
+    public function mostrarTodosPasajeros(){
+        $pasajeros = $this->getPasajeros();
+        $cantPasajeros = count($pasajeros);
+        $coleccionString = "";
+
+        for($i = 0; $i < $cantPasajeros; $i++){
+            $coleccionString = $coleccionString . 
+            "\n--------------------\n" .
+            "\nPasajero número " . $i .
+            "\nNombre: " . $pasajeros[$i]["nombre"] .
+            "\nApellido: " . $pasajeros[$i]["apellido"] .
+            "\nNúmero de documento: " . $pasajeros[$i]["numeroDoc"] .
+            "\n--------------------\n";
+        }
+
+        return $coleccionString;
+    }
+
     // Método __toString
 
     public function __toString()
@@ -136,7 +158,7 @@ class Viaje{
         return
         "\nCódigo de viaje: " . $this->getCodViaje().
         "\nDestino: " . $this->getDestino().
-        "\nCantidad máxima de pasajeros: " . $this->getCantMaxPasajeros().
+        "\nPasajeros: " . $this->mostrarTodosPasajeros().
         "\nCantidad de pasajeros: " . count($this->getPasajeros());
     }
 }
