@@ -3,6 +3,7 @@
 class Viaje{
     private $codViaje;
     private $destino;
+    private $responsable;
     private $cantMaxPasajeros;
     private $pasajeros;
 
@@ -10,13 +11,15 @@ class Viaje{
      * Método constructor
      * @param string $codViaje
      * @param string $destino
+     * @param object $responsable
      * @param integer $cantMaxPasajeros
-     * @param array $pasajeros arreglo multidimensional (claves: nombre, apellido y numeroDoc)
+     * @param array $pasajeros arreglo indexado cuyos valores son objetos
      */
-    public function __construct($codViaje, $destino, $cantMaxPasajeros, $pasajeros)
+    public function __construct($codViaje, $destino, $responsable, $cantMaxPasajeros, $pasajeros)
     {
         $this->codViaje = $codViaje;
         $this->destino = $destino;
+        $this->responsable = $responsable;
         $this->cantMaxPasajeros = $cantMaxPasajeros;
         $this->pasajeros = $pasajeros;
     }
@@ -55,6 +58,14 @@ class Viaje{
     {
         $this->pasajeros = $nuevoPasajeros;
     }
+    public function getResponsable()
+    {
+        return $this->responsable;
+    }
+    public function setReponsable($nuevoResponsable)
+    {
+        $this->responsable = $nuevoResponsable;
+    }
 
     // Métodos varios
 
@@ -72,7 +83,7 @@ class Viaje{
 
     /**
      * Agrega uno o más pasajeros nuevos
-     * @param array $pasajeroNuevo arreglo multidimensional (más de 1) ó asociativo (1)
+     * @param array $pasajeroNuevo objeto o arreglo de objetos de la clase pasajero
      */
     public function agregarPasajeros($pasajeroNuevo){
         $arrayPasajeros = $this->getPasajeros();
@@ -83,6 +94,33 @@ class Viaje{
         $this->setPasajeros($arrayPasajeros);
     }
 
+    /**
+     * Busca un pasajero por número de documento
+     * @param int $numDoc
+     * @return int|null el índice del pasajero o null si no lo encuentra
+     */
+    public function buscarPasajero($numDoc){
+        $arrayPasajeros = $this->getPasajeros();
+        $contador = 0;
+        
+        // Para evitar error de clave indefenida a la hora de ingresar un pasajero
+        // por primera vez. Se coloca que sólo haga la verificación de DNI si
+        // existen pasajeros
+        if(count($arrayPasajeros) > 0){
+            do{
+                $objPasajeros = $arrayPasajeros[$contador];
+                $contador++;
+            }while($contador < count($arrayPasajeros) && $objPasajeros->getNumDoc() != $numDoc);
+
+            if($objPasajeros->getNumDoc() != $numDoc){
+                return null;
+            } else{
+                return $contador - 1;
+            }
+        } else{
+            return null;
+        }  
+    }
 
     /**
      * Modifica los datos de un pasajero. Se puede usar "*" para dejar algún dato igual
@@ -90,20 +128,26 @@ class Viaje{
      * @param string $nombre 
      * @param string $apellido
      * @param int $numDoc
+     * @param string $telefono
      */
-    public function modificarPasajero($indicePasajero, $nombre, $apellido, $numDoc){
+    public function modificarPasajero($indicePasajero, $nombre, $apellido, $numDoc, $telefono){
         $arrayPasajeros = $this->getPasajeros();
+        $objPasajero = $arrayPasajeros[$indicePasajero];
 
         if($nombre != "*"){
-            $arrayPasajeros[$indicePasajero]["nombre"] = $nombre;
+            $objPasajero->setNombre($nombre);
         }
         if($apellido != "*"){
-            $arrayPasajeros[$indicePasajero]["apellido"] = $apellido;
+            $objPasajero->setApellido($apellido);
         }
         if($numDoc != "*"){
-            $arrayPasajeros[$indicePasajero]["numeroDoc"] = $numDoc;
+            $objPasajero->setNumDoc($numDoc);
+        }
+        if($telefono != "*"){
+            $objPasajero->setTelefono($telefono);
         }
 
+        $arrayPasajeros[$indicePasajero] = $objPasajero;
         $this->setPasajeros($arrayPasajeros);
     }
 
@@ -119,14 +163,15 @@ class Viaje{
 
     /**
      * Muestra un pasajero
+     * @return string
      */
     public function mostrarPasajero($indicePasajero){
         $arrayPasajeros = $this->getPasajeros();
-        echo
-        "\nPasajero número " . $indicePasajero .
-        "\nNombre: " . $arrayPasajeros[$indicePasajero]["nombre"] .
-        "\nApellido: " . $arrayPasajeros[$indicePasajero]["apellido"] .
-        "\nNúmero de documento: " . $arrayPasajeros[$indicePasajero]["numeroDoc"];
+        $objPasajero = $arrayPasajeros[$indicePasajero];
+        $stringPasajero = "\nPasajero número " . $indicePasajero .
+        $objPasajero;
+
+        return $stringPasajero;
     }
 
     /**
@@ -140,12 +185,10 @@ class Viaje{
 
         for($i = 0; $i < $cantPasajeros; $i++){
             $coleccionString = $coleccionString . 
-            "\n--------------------\n" .
+            "\n--------------------" .
             "\nPasajero número " . $i .
-            "\nNombre: " . $pasajeros[$i]["nombre"] .
-            "\nApellido: " . $pasajeros[$i]["apellido"] .
-            "\nNúmero de documento: " . $pasajeros[$i]["numeroDoc"] .
-            "\n--------------------\n";
+            $pasajeros[$i].
+            "\n--------------------";
         }
 
         return $coleccionString;
@@ -157,7 +200,9 @@ class Viaje{
     {
         return
         "\nCódigo de viaje: " . $this->getCodViaje().
-        "\nDestino: " . $this->getDestino().
+        "\nDestino: " . $this->getDestino(). "\n--------------------" .
+        "\nResponsable:\n--------------------" . $this->getResponsable(). "\n--------------------" .
+        "\nCantidad máxima de pasajeros: " . $this->getCantMaxPasajeros().
         "\nPasajeros: " . $this->mostrarTodosPasajeros().
         "\nCantidad de pasajeros: " . count($this->getPasajeros());
     }
