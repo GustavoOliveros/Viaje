@@ -84,6 +84,4 @@ class ViajeTerrestre extends Viaje{
         "\nComodidad del asiento: " . $this->getComodidadAsiento();
     }
 }
-
-
 ?>

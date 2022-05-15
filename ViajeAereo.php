@@ -137,11 +137,4 @@ class ViajeAereo extends Viaje{
         "\nCantidad de escalas: " . $this->getCantEscalas();
     }
 }
-
-
-
-
-
-
-
 ?>
