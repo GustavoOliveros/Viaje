@@ -101,6 +101,12 @@ if($respuestaPrecarga == "s"){
     $cantidadMaxPasajeros = trim(fgets(STDIN));
     echo "Ingrese el importe del viaje: ";
     $importe = trim(fgets(STDIN));
+    
+    // Verificación para prevenir errores a la hora de vender un pasaje
+    if(!is_numeric($importe)){
+        $importe = 0;
+    }
+
     echo "¿Ida y vuelta? (s/n): ";
     $idaYVuelta = trim(fgets(STDIN));
     $idaYVuelta = $idaYVuelta == "s";
