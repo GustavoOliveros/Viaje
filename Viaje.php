@@ -6,6 +6,8 @@ class Viaje{
     private $responsable;
     private $cantMaxPasajeros;
     private $pasajeros;
+    private $importe;
+    private $idaYVuelta;
 
     /**
      * Método constructor
@@ -14,14 +16,18 @@ class Viaje{
      * @param object $responsable
      * @param integer $cantMaxPasajeros
      * @param array $pasajeros arreglo indexado cuyos valores son objetos
+     * @param float $importe
+     * @param boolean $idaYVuelta
      */
-    public function __construct($codViaje, $destino, $responsable, $cantMaxPasajeros, $pasajeros)
+    public function __construct($codViaje, $destino, $responsable, $cantMaxPasajeros, $pasajeros, $importe, $idaYVuelta)
     {
         $this->codViaje = $codViaje;
         $this->destino = $destino;
         $this->responsable = $responsable;
         $this->cantMaxPasajeros = $cantMaxPasajeros;
         $this->pasajeros = $pasajeros;
+        $this->importe = $importe;
+        $this->idaYVuelta = $idaYVuelta;
     }
 
     // Métodos de acceso
@@ -66,31 +72,55 @@ class Viaje{
     {
         $this->responsable = $nuevoResponsable;
     }
+    public function getImporte()
+    {
+        return $this->importe;
+    }
+    public function setImporte($importe)
+    {
+        $this->importe = $importe;
+    }
+    public function getIdaYVuelta()
+    {
+        return $this->idaYVuelta;
+    }
+    public function setIdaYVuelta($idaYVuelta)
+    {
+        $this->idaYVuelta = $idaYVuelta;
+    }
 
     // Métodos varios
 
     /**
-     * Cargar datos de viaje
-     * @param string $codigoViaje
-     * @param string $destino
-     * @param int $cantidadMaximaPasajeros
+     * Cargar nuevos datos de viaje 
+     * @param string $codViaje "*" deja el dato igual
+     * @param string $destino "*" deja el dato igual
+     * @param integer $cantMaximaPasajeros "*" deja el dato igual
+     * @param float $importe "*" deja el dato igual
+     * @param boolean $idaYVuelta "*" deja el dato igual
      */
-    public function cargarDatos($codigoViaje, $destino, $cantidadMaximaPasajeros){
-        $this->setCodViaje($codigoViaje);
-        $this->setDestino($destino);
-        $this->setCantMaxPasajeros($cantidadMaximaPasajeros);
+    public function cargarDatos($codigoViaje, $destino, $cantidadMaximaPasajeros, $importe){
+        if($codigoViaje != "*"){
+            $this->setCodViaje($codigoViaje);
+        }
+        if($destino != "*"){
+            $this->setDestino($destino);
+        }
+        if($cantidadMaximaPasajeros != "*"){
+            $this->setCantMaxPasajeros($cantidadMaximaPasajeros);
+        }
+        if(is_numeric($importe) && $importe != "*"){
+            $this->setImporte($importe);
+        }
     }
 
     /**
-     * Agrega uno o más pasajeros nuevos
-     * @param array $pasajeroNuevo objeto o arreglo de objetos de la clase pasajero
+     * Agrega un pasajero nuevo al arreglo
+     * @param array $pasajeroNuevo objeto de la clase pasajero
      */
-    public function agregarPasajeros($pasajeroNuevo){
+    public function agregarPasajero($pasajeroNuevo){
         $arrayPasajeros = $this->getPasajeros();
-        $indMaximo = count($pasajeroNuevo) - 1;
-        for($i = 0; $i <= $indMaximo; $i++){
-            array_push($arrayPasajeros, $pasajeroNuevo[$i]);
-        }        
+        $arrayPasajeros[count($arrayPasajeros)] = $pasajeroNuevo;
         $this->setPasajeros($arrayPasajeros);
     }
 
@@ -194,13 +224,50 @@ class Viaje{
         return $coleccionString;
     }
 
+    /**
+     * Retorna true si hay pasajes disponibles, false caso contrario
+     * @return boolean
+     */
+    public function hayPasajeDisponible(){
+        $cantPasajeros = count($this->getPasajeros());
+        if($cantPasajeros < $this->getCantMaxPasajeros()){
+            $hayDisponible = true;
+        }else{
+            $hayDisponible = false;
+        }
+
+        return $hayDisponible;
+    }
+
+    /**
+     * Vende un pasaje si hay disponibles
+     * @param object $pasajero objeto de la clase Pasajero
+     * @return float|null el importe del pasaje o null si no se concretó
+     */
+    public function venderPasaje($pasajero){
+        //Revisa si hay asientos disponibles
+        if($this->hayPasajeDisponible()){
+            // Si hay, agrega al pasajero y cambia la bandera.
+            $this->agregarPasajero($pasajero);
+            $resultado = $this->getImporte();
+        }else{
+            $resultado = null;
+        }
+
+        return $resultado;
+    }
+
     // Método __toString
 
     public function __toString()
     {
+        $idaYVuelta = $this->getIdaYVuelta() ? "Si" : "No";
+
         return
         "\nCódigo de viaje: " . $this->getCodViaje().
-        "\nDestino: " . $this->getDestino(). "\n--------------------" .
+        "\nDestino: " . $this->getDestino().
+        "\nImporte: " . $this->getImporte().
+        "\nIda y vuelta: ". $idaYVuelta . "\n--------------------" .
         "\nResponsable:\n--------------------" . $this->getResponsable(). "\n--------------------" .
         "\nCantidad máxima de pasajeros: " . $this->getCantMaxPasajeros().
         "\nPasajeros: " . $this->mostrarTodosPasajeros().
