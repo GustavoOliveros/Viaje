@@ -1,5 +1,5 @@
 # Viaje
-Ejercicio obligatorio número 1 realizado en PHP.
+Ejercicios obligatorios realizados en PHP.
 
 # Materia 2022
  Introducción a la Programación Orientada a Objetos
